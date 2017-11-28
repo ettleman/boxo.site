@@ -1378,6 +1378,12 @@ General Styles - Owlcarousel
   background-size: cover;
 }
 
+.titan-title-size-a {
+  letter-spacing: 4px;
+  font-size: 24px;
+  color: white;
+}
+
 .titan-title-size-0 {
   letter-spacing: 2px;
   font-size: 9px;
