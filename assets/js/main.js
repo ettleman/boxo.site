@@ -1,851 +1,758 @@
-console.log('%c Proudly Crafted with ZiOn.', 'background: #222; color: #bada55');
-
-/* ---------------------------------------------- /*
- * Preloader
- /* ---------------------------------------------- */
-(function(){
-    $(window).on('load', function() {
-        $('.loader').fadeOut();
-        $('.page-loader').delay(350).fadeOut('slow');
-    });
-
-    $(document).ready(function() {
-
-        /* ---------------------------------------------- /*
-         * WOW Animation When You Scroll
-         /* ---------------------------------------------- */
-
-        wow = new WOW({
-            mobile: false
-        });
-        wow.init();
-
-
-        /* ---------------------------------------------- /*
-         * Scroll top
-         /* ---------------------------------------------- */
-
-        $(window).scroll(function() {
-            if ($(this).scrollTop() > 100) {
-                $('.scroll-up').fadeIn();
-            } else {
-                $('.scroll-up').fadeOut();
-            }
-        });
-
-        $('a[href="#totop"]').click(function() {
-            $('html, body').animate({ scrollTop: 0 }, 'slow');
-            return false;
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Initialization General Scripts for all pages
-         /* ---------------------------------------------- */
-
-        var homeSection = $('.home-section'),
-            navbar      = $('.navbar-custom'),
-            navHeight   = navbar.height(),
-            worksgrid   = $('#works-grid'),
-            width       = Math.max($(window).width(), window.innerWidth),
-            mobileTest  = false;
-
-        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            mobileTest = true;
-        }
-
-        buildHomeSection(homeSection);
-        navbarAnimation(navbar, homeSection, navHeight);
-        navbarSubmenu(width);
-        hoverDropdown(width, mobileTest);
-
-        $(window).resize(function() {
-            var width = Math.max($(window).width(), window.innerWidth);
-            buildHomeSection(homeSection);
-            hoverDropdown(width, mobileTest);
-        });
-
-        $(window).scroll(function() {
-            effectsHomeSection(homeSection, this);
-            navbarAnimation(navbar, homeSection, navHeight);
-        });
-
-        /* ---------------------------------------------- /*
-         * Set sections backgrounds
-         /* ---------------------------------------------- */
-
-        var module = $('.home-section, .module, .module-small, .side-image');
-        module.each(function(i) {
-            if ($(this).attr('data-background')) {
-                $(this).css('background-image', 'url(' + $(this).attr('data-background') + ')');
-            }
-        });
-
-        /* ---------------------------------------------- /*
-         * Home section height
-         /* ---------------------------------------------- */
-
-        function buildHomeSection(homeSection) {
-            if (homeSection.length > 0) {
-                if (homeSection.hasClass('home-full-height')) {
-                    homeSection.height($(window).height());
-                } else {
-                    homeSection.height($(window).height() * 0.85);
-                }
-            }
-        }
-
-
-        /* ---------------------------------------------- /*
-         * Home section effects
-         /* ---------------------------------------------- */
-
-        function effectsHomeSection(homeSection, scrollTopp) {
-            if (homeSection.length > 0) {
-                var homeSHeight = homeSection.height();
-                var topScroll = $(document).scrollTop();
-                if ((homeSection.hasClass('home-parallax')) && ($(scrollTopp).scrollTop() <= homeSHeight)) {
-                    homeSection.css('top', (topScroll * 0.55));
-                }
-                if (homeSection.hasClass('home-fade') && ($(scrollTopp).scrollTop() <= homeSHeight)) {
-                    var caption = $('.caption-content');
-                    caption.css('opacity', (1 - topScroll/homeSection.height() * 1));
-                }
-            }
-        }
-
-        /* ---------------------------------------------- /*
-         * Intro slider setup
-         /* ---------------------------------------------- */
-
-        if( $('.hero-slider').length > 0 ) {
-            $('.hero-slider').flexslider( {
-                animation: "fade",
-                animationSpeed: 1000,
-                animationLoop: true,
-                prevText: '',
-                nextText: '',
-                before: function(slider) {
-                    $('.titan-caption').fadeOut().animate({top:'-80px'},{queue:false, easing: 'swing', duration: 700});
-                    slider.slides.eq(slider.currentSlide).delay(500);
-                    slider.slides.eq(slider.animatingTo).delay(500);
-                },
-                after: function(slider) {
-                    $('.titan-caption').fadeIn().animate({top:'0'},{queue:false, easing: 'swing', duration: 700});
-                },
-                useCSS: true
-            });
-        }
-
-
-        /* ---------------------------------------------- /*
-         * Rotate
-         /* ---------------------------------------------- */
-
-        $(".rotate").textrotator({
-            animation: "dissolve",
-            separator: "|",
-            speed: 3000
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Transparent navbar animation
-         /* ---------------------------------------------- */
-
-        function navbarAnimation(navbar, homeSection, navHeight) {
-            var topScroll = $(window).scrollTop();
-            if (navbar.length > 0 && homeSection.length > 0) {
-                if(topScroll >= navHeight) {
-                    navbar.removeClass('navbar-transparent');
-                } else {
-                    navbar.addClass('navbar-transparent');
-                }
-            }
-        }
-
-        /* ---------------------------------------------- /*
-         * Navbar submenu
-         /* ---------------------------------------------- */
-
-        function navbarSubmenu(width) {
-            if (width > 767) {
-                $('.navbar-custom .navbar-nav > li.dropdown').hover(function() {
-                    var MenuLeftOffset  = $('.dropdown-menu', $(this)).offset().left;
-                    var Menu1LevelWidth = $('.dropdown-menu', $(this)).width();
-                    if (width - MenuLeftOffset < Menu1LevelWidth * 2) {
-                        $(this).children('.dropdown-menu').addClass('leftauto');
-                    } else {
-                        $(this).children('.dropdown-menu').removeClass('leftauto');
-                    }
-                    if ($('.dropdown', $(this)).length > 0) {
-                        var Menu2LevelWidth = $('.dropdown-menu', $(this)).width();
-                        if (width - MenuLeftOffset - Menu1LevelWidth < Menu2LevelWidth) {
-                            $(this).children('.dropdown-menu').addClass('left-side');
-                        } else {
-                            $(this).children('.dropdown-menu').removeClass('left-side');
-                        }
-                    }
-                });
-            }
-        }
-
-        /* ---------------------------------------------- /*
-         * Navbar hover dropdown on desctop
-         /* ---------------------------------------------- */
-
-        function hoverDropdown(width, mobileTest) {
-            if ((width > 767) && (mobileTest !== true)) {
-                $('.navbar-custom .navbar-nav > li.dropdown, .navbar-custom li.dropdown > ul > li.dropdown').removeClass('open');
-                var delay = 0;
-                var setTimeoutConst;
-                $('.navbar-custom .navbar-nav > li.dropdown, .navbar-custom li.dropdown > ul > li.dropdown').hover(function() {
-                        var $this = $(this);
-                        setTimeoutConst = setTimeout(function() {
-                            $this.addClass('open');
-                            $this.find('.dropdown-toggle').addClass('disabled');
-                        }, delay);
-                    },
-                    function() {
-                        clearTimeout(setTimeoutConst);
-                        $(this).removeClass('open');
-                        $(this).find('.dropdown-toggle').removeClass('disabled');
-                    });
-            } else {
-                $('.navbar-custom .navbar-nav > li.dropdown, .navbar-custom li.dropdown > ul > li.dropdown').unbind('mouseenter mouseleave');
-                $('.navbar-custom [data-toggle=dropdown]').not('.binded').addClass('binded').on('click', function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    $(this).parent().siblings().removeClass('open');
-                    $(this).parent().siblings().find('[data-toggle=dropdown]').parent().removeClass('open');
-                    $(this).parent().toggleClass('open');
-                });
-            }
-        }
-
-        /* ---------------------------------------------- /*
-         * Navbar collapse on click
-         /* ---------------------------------------------- */
-
-        $(document).on('click','.navbar-collapse.in',function(e) {
-            if( $(e.target).is('a') && $(e.target).attr('class') != 'dropdown-toggle' ) {
-                $(this).collapse('hide');
-            }
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Video popup, Gallery
-         /* ---------------------------------------------- */
-
-        $('.video-pop-up').magnificPopup({
-            type: 'iframe'
-        });
-
-        $(".gallery-item").magnificPopup({
-            delegate: 'a',
-            type: 'image',
-            gallery: {
-                enabled: true,
-                navigateByImgClick: true,
-                preload: [0,1]
-            },
-            image: {
-                titleSrc: 'title',
-                tError: 'The image could not be loaded.'
-            }
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Portfolio
-         /* ---------------------------------------------- */
-
-        var worksgrid   = $('#works-grid'),
-            worksgrid_mode;
-
-        if (worksgrid.hasClass('works-grid-masonry')) {
-            worksgrid_mode = 'masonry';
-        } else {
-            worksgrid_mode = 'fitRows';
-        }
-
-        worksgrid.imagesLoaded(function() {
-            worksgrid.isotope({
-                layoutMode: worksgrid_mode,
-                itemSelector: '.work-item'
-            });
-        });
-
-        $('#filters a').click(function() {
-            $('#filters .current').removeClass('current');
-            $(this).addClass('current');
-            var selector = $(this).attr('data-filter');
-
-            worksgrid.isotope({
-                filter: selector,
-                animationOptions: {
-                    duration: 750,
-                    easing: 'linear',
-                    queue: false
-                }
-            });
-
-            return false;
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Testimonials
-         /* ---------------------------------------------- */
-
-        if ($('.testimonials-slider').length > 0 ) {
-            $('.testimonials-slider').flexslider( {
-                animation: "slide",
-                smoothHeight: true
-            });
-        }
-
-
-        /* ---------------------------------------------- /*
-         * Post Slider
-         /* ---------------------------------------------- */
-
-        if ($('.post-images-slider').length > 0 ) {
-            $('.post-images-slider').flexslider( {
-                animation: "slide",
-                smoothHeight: true,
-            });
-        }
-
-
-        /* ---------------------------------------------- /*
-         * Progress bar animations
-         /* ---------------------------------------------- */
-
-        $('.progress-bar').each(function(i) {
-            $(this).appear(function() {
-                var percent = $(this).attr('aria-valuenow');
-                $(this).animate({'width' : percent + '%'});
-                $(this).find('span').animate({'opacity' : 1}, 900);
-                $(this).find('span').countTo({from: 0, to: percent, speed: 900, refreshInterval: 30});
-            });
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Funfact Count-up
-         /* ---------------------------------------------- */
-
-        $('.count-item').each(function(i) {
-            $(this).appear(function() {
-                var number = $(this).find('.count-to').data('countto');
-                $(this).find('.count-to').countTo({from: 0, to: number, speed: 1200, refreshInterval: 30});
-            });
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Youtube video background
-         /* ---------------------------------------------- */
-
-        $(function(){
-            $(".video-player").mb_YTPlayer();
-        });
-
-        $('#video-play').click(function(event) {
-            event.preventDefault();
-            if ($(this).hasClass('fa-play')) {
-                $('.video-player').playYTP();
-            } else {
-                $('.video-player').pauseYTP();
-            }
-            $(this).toggleClass('fa-play fa-pause');
-            return false;
-        });
-
-        $('#video-volume').click(function(event) {
-            event.preventDefault();
-            if ($(this).hasClass('fa-volume-off')) {
-                $('.video-player').YTPUnmute();
-            } else {
-                $('.video-player').YTPMute();
-            }
-            $(this).toggleClass('fa-volume-off fa-volume-up');
-            return false;
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Owl Carousel
-         /* ---------------------------------------------- */
-
-        $('.owl-carousel').each(function(i) {
-
-            // Check items number
-            if ($(this).data('items') > 0) {
-                items = $(this).data('items');
-            } else {
-                items = 4;
-            }
-
-            // Check pagination true/false
-            if (($(this).data('pagination') > 0) && ($(this).data('pagination') === true)) {
-                pagination = true;
-            } else {
-                pagination = false;
-            }
-
-            // Check navigation true/false
-            if (($(this).data('navigation') > 0) && ($(this).data('navigation') === true)) {
-                navigation = true;
-            } else {
-                navigation = false;
-            }
-
-            // Build carousel
-            $(this).owlCarousel( {
-                navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
-                nav: navigation,
-                dots: pagination,
-                loop: true,
-                dotsSpeed: 400,
-                items: items,
-                navSpeed: 300,
-                autoplay: 2000
-            });
-
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Blog masonry
-         /* ---------------------------------------------- */
-
-        $('.post-masonry').imagesLoaded(function() {
-            $('.post-masonry').masonry();
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Scroll Animation
-         /* ---------------------------------------------- */
-
-        $('.section-scroll').bind('click', function(e) {
-            var anchor = $(this);
-            $('html, body').stop().animate({
-                scrollTop: $(anchor.attr('href')).offset().top - 50
-            }, 1000);
-            e.preventDefault();
-        });
-
-        /*===============================================================
-         Working Contact Form
-         ================================================================*/
-
-        $("#contactForm").submit(function (e) {
-
-            e.preventDefault();
-            var $ = jQuery;
-
-            var postData = $(this).serializeArray(),
-                formURL = $(this).attr("action"),
-                $cfResponse = $('#contactFormResponse'),
-                $cfsubmit = $("#cfsubmit"),
-                cfsubmitText = $cfsubmit.text();
-
-            $cfsubmit.text("Sending...");
-
-
-            $.ajax(
-                {
-                    url: formURL,
-                    type: "POST",
-                    data: postData,
-                    success: function (data) {
-                        $cfResponse.html(data);
-                        $cfsubmit.text(cfsubmitText);
-                        $('#contactForm input[name=name]').val('');
-                        $('#contactForm input[name=email]').val('');
-                        $('#contactForm textarea[name=message]').val('');
-                    },
-                    error: function (data) {
-                        alert("Error occurd! Please try again");
-                    }
-                });
-
-            return false;
-
-        });
-
-
-        /*===============================================================
-         Working Request A Call Form
-         ================================================================*/
-
-        $("#requestACall").submit(function (e) {
-
-            e.preventDefault();
-            var $ = jQuery;
-
-            var postData = $(this).serializeArray(),
-                formURL = $(this).attr("action"),
-                $cfResponse = $('#requestFormResponse'),
-                $cfsubmit = $("#racSubmit"),
-                cfsubmitText = $cfsubmit.text();
-
-            $cfsubmit.text("Sending...");
-
-
-            $.ajax(
-                {
-                    url: formURL,
-                    type: "POST",
-                    data: postData,
-                    success: function (data) {
-                        $cfResponse.html(data);
-                        $cfsubmit.text(cfsubmitText);
-                        $('#requestACall input[name=name]').val('');
-                        $('#requestACall input[name=subject]').val('');
-                        $('#requestACall textarea[name=phone]').val('');
-                    },
-                    error: function (data) {
-                        alert("Error occurd! Please try again");
-                    }
-                });
-
-            return false;
-
-        });
-
-
-        /*===============================================================
-         Working Reservation Form
-         ================================================================*/
-
-        $("#reservationForm").submit(function (e) {
-
-            e.preventDefault();
-            var $ = jQuery;
-
-            var postData = $(this).serializeArray(),
-                formURL = $(this).attr("action"),
-                $cfResponse = $('#reservationFormResponse'),
-                $cfsubmit = $("#rfsubmit"),
-                cfsubmitText = $cfsubmit.text();
-
-            $cfsubmit.text("Sending...");
-
-
-            $.ajax(
-                {
-                    url: formURL,
-                    type: "POST",
-                    data: postData,
-                    success: function (data) {
-                        $cfResponse.html(data);
-                        $cfsubmit.text(cfsubmitText);
-                        $('#reservationForm input[name=date]').val('');
-                        $('#reservationForm input[name=time]').val('');
-                        $('#reservationForm textarea[name=people]').val('');
-                        $('#reservationForm textarea[name=email]').val('');
-                    },
-                    error: function (data) {
-                        alert("Error occurd! Please try again");
-                    }
-                });
-
-            return false;
-
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Subscribe form ajax
-         /* ---------------------------------------------- */
-
-        $('#subscription-form').submit(function(e) {
-
-            e.preventDefault();
-            var $form           = $('#subscription-form');
-            var submit          = $('#subscription-form-submit');
-            var ajaxResponse    = $('#subscription-response');
-            var email           = $('input#semail').val();
-
-            $.ajax({
-                type: 'POST',
-                url: 'assets/php/subscribe.php',
-                dataType: 'json',
-                data: {
-                    email: email
-                },
-                cache: false,
-                beforeSend: function(result) {
-                    submit.empty();
-                    submit.append('<i class="fa fa-cog fa-spin"></i> Wait...');
-                },
-                success: function(result) {
-                    if(result.sendstatus == 1) {
-                        ajaxResponse.html(result.message);
-                        $form.fadeOut(500);
-                    } else {
-                        ajaxResponse.html(result.message);
-                    }
-                }
-            });
-
-        });
-
-
-        /* ---------------------------------------------- /*
-         * Google Map
-         /* ---------------------------------------------- */
-
-        if($("#map").length == 0 || typeof google == 'undefined') return;
-
-        // When the window has finished loading create our google map below
-        google.maps.event.addDomListener(window, 'load', init);
-
-        var mkr = new google.maps.LatLng(40.6700, -74.2000);
-        var cntr = (mobileTest) ? mkr : new google.maps.LatLng(40.6700, -73.9400);
-
-        function init() {
-            // Basic options for a simple Google Map
-            // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
-            var mapOptions = {
-                // How zoomed in you want the map to start at (always required)
-                zoom: 11,
-                scrollwheel: false,
-                // The latitude and longitude to center the map (always required)
-                center: cntr, // New York
-
-                // How you would like to style the map.
-                // This is where you would paste any style found on Snazzy Maps.
-                styles: [
-                    {
-                        "featureType": "all",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            },
-                            {
-                                "saturation": "-11"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "saturation": "22"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative",
-                        "elementType": "geometry.stroke",
-                        "stylers": [
-                            {
-                                "saturation": "-58"
-                            },
-                            {
-                                "color": "#cfcece"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text",
-                        "stylers": [
-                            {
-                                "color": "#f8f8f8"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text.fill",
-                        "stylers": [
-                            {
-                                "color": "#999999"
-                            },
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text.stroke",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "administrative.country",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "color": "#f9f9f9"
-                            },
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#f2f2f2"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "saturation": "-19"
-                            },
-                            {
-                                "lightness": "-2"
-                            },
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            },
-                            {
-                                "lightness": 45
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.highway",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.arterial",
-                        "elementType": "labels.icon",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#d8e1e5"
-                            },
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "color": "#dedede"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "labels.text",
-                        "stylers": [
-                            {
-                                "color": "#cbcbcb"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "labels.text.fill",
-                        "stylers": [
-                            {
-                                "color": "#9c9c9c"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "labels.text.stroke",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    }
-                ]
-            };
-
-            // Get the HTML DOM element that will contain your map
-            // We are using a div with id="map" seen below in the <body>
-            var mapElement = document.getElementById('map');
-
-            // Create the Google Map using our element and options defined above
-            var map = new google.maps.Map(mapElement, mapOptions);
-
-            // Let's also add a marker while we're at it
-            var image = new google.maps.MarkerImage('assets/images/map-icon.png',
-                new google.maps.Size(59, 65),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(24, 42)
-            );
-
-            var marker = new google.maps.Marker({
-                position: mkr,
-                icon: image,
-                title: 'Titan',
-                infoWindow: {
-                    content: '<p><strong>Rival</strong><br/>121 Somewhere Ave, Suite 123<br/>P: (123) 456-7890<br/>Australia</p>'
-                },
-                map: map,
-            });
-        }
-
-    });
+/*
+	Ethereal by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/
+
+(function($) {
+
+	// Settings.
+		var settings = {
+
+			// Keyboard shortcuts.
+				keyboardShortcuts: {
+
+					// If true, enables scrolling via keyboard shortcuts.
+						enabled: true,
+
+					// Sets the distance to scroll when using the left/right arrow keys.
+						distance: 50
+
+				},
+
+			// Scroll wheel.
+				scrollWheel: {
+
+					// If true, enables scrolling via the scroll wheel.
+						enabled: true,
+
+					// Sets the scroll wheel factor. (Ideally) a value between 0 and 1 (lower = slower scroll, higher = faster scroll).
+						factor: 1
+
+				},
+
+			// Scroll zones.
+				scrollZones: {
+
+					// If true, enables scrolling via scroll zones on the left/right edges of the scren.
+						enabled: true,
+
+					// Sets the speed at which the page scrolls when a scroll zone is active (higher = faster scroll, lower = slower scroll).
+						speed: 15
+
+				},
+
+			// Dragging.
+				dragging: {
+
+					// If true, enables scrolling by dragging the main wrapper with the mouse.
+						enabled: true,
+
+					// Sets the momentum factor. Must be a value between 0 and 1 (lower = less momentum, higher = more momentum, 0 = disable momentum scrolling).
+						momentum: 0.875,
+
+					// Sets the drag threshold (in pixels).
+						threshold: 10
+
+				},
+
+			// If set to a valid selector , prevents key/mouse events from bubbling from these elements.
+				excludeSelector: 'input:focus, select:focus, textarea:focus, audio, video, iframe',
+
+			// Link scroll speed.
+				linkScrollSpeed: 1000
+
+		};
+
+	// Skel.
+		skel.breakpoints({
+			xlarge: '(max-width: 1680px)',
+			large: '(max-width: 1280px)',
+			medium: '(max-width: 980px)',
+			small: '(max-width: 736px)',
+			xsmall: '(max-width: 480px)',
+			xxsmall: '(max-width: 360px)',
+			short: '(min-aspect-ratio: 16/7)',
+			xshort: '(min-aspect-ratio: 16/6)'
+		});
+
+	// Ready event.
+		$(function() {
+
+			// Vars.
+				var	$window = $(window),
+					$document = $(document),
+					$body = $('body'),
+					$html = $('html'),
+					$bodyHtml = $('body,html'),
+					$wrapper = $('#wrapper');
+
+			// Disable animations/transitions until the page has loaded.
+				$body.addClass('is-loading');
+
+				$window.on('load', function() {
+					window.setTimeout(function() {
+						$body.removeClass('is-loading');
+					}, 100);
+				});
+
+			// Tweaks/fixes.
+
+				// Mobile: Revert to native scrolling.
+					if (skel.vars.mobile) {
+
+						// Disable all scroll-assist features.
+							settings.keyboardShortcuts.enabled = false;
+							settings.scrollWheel.enabled = false;
+							settings.scrollZones.enabled = false;
+							settings.dragging.enabled = false;
+
+						// Re-enable overflow on body.
+							$body.css('overflow-x', 'auto');
+
+					}
+
+				// IE: Various fixes.
+					if (skel.vars.browser == 'ie') {
+
+						// Enable IE mode.
+							$body.addClass('is-ie');
+
+						// Page widths.
+							$window
+								.on('load resize', function() {
+
+									// Calculate wrapper width.
+										var w = 0;
+
+										$wrapper.children().each(function() {
+											w += $(this).width();
+										});
+
+									// Apply to page.
+										$html.css('width', w + 'px');
+
+								});
+
+					}
+
+				// Polyfill: Object fit.
+					if (!skel.canUse('object-fit')) {
+
+						$('.image[data-position]').each(function() {
+
+							var $this = $(this),
+								$img = $this.children('img');
+
+							// Apply img as background.
+								$this
+									.css('background-image', 'url("' + $img.attr('src') + '")')
+									.css('background-position', $this.data('position'))
+									.css('background-size', 'cover')
+									.css('background-repeat', 'no-repeat');
+
+							// Hide img.
+								$img
+									.css('opacity', '0');
+
+						});
+
+					}
+
+			// Keyboard shortcuts.
+				if (settings.keyboardShortcuts.enabled)
+					(function() {
+
+						$wrapper
+
+							// Prevent keystrokes inside excluded elements from bubbling.
+								.on('keypress keyup keydown', settings.excludeSelector, function(event) {
+
+									// Stop propagation.
+										event.stopPropagation();
+
+								});
+
+						$window
+
+							// Keypress event.
+								.on('keydown', function(event) {
+
+									var scrolled = false;
+
+									switch (event.keyCode) {
+
+										// Left arrow.
+											case 37:
+												$document.scrollLeft($document.scrollLeft() - settings.keyboardShortcuts.distance);
+												scrolled = true;
+												break;
+
+										// Right arrow.
+											case 39:
+												$document.scrollLeft($document.scrollLeft() + settings.keyboardShortcuts.distance);
+												scrolled = true;
+												break;
+
+										// Page Up.
+											case 33:
+												$document.scrollLeft($document.scrollLeft() - $window.width() + 100);
+												scrolled = true;
+												break;
+
+										// Page Down, Space.
+											case 34:
+											case 32:
+												$document.scrollLeft($document.scrollLeft() + $window.width() - 100);
+												scrolled = true;
+												break;
+
+										// Home.
+											case 36:
+												$document.scrollLeft(0);
+												scrolled = true;
+												break;
+
+										// End.
+											case 35:
+												$document.scrollLeft($document.width());
+												scrolled = true;
+												break;
+
+									}
+
+									// Scrolled?
+										if (scrolled) {
+
+											// Prevent default.
+												event.preventDefault();
+												event.stopPropagation();
+
+											// Stop link scroll.
+												$bodyHtml.stop();
+
+										}
+
+								});
+
+					})();
+
+			// Scroll wheel.
+				if (settings.scrollWheel.enabled)
+					(function() {
+
+						// Based on code by @miorel + @pieterv of Facebook (thanks guys :)
+						// github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
+							var normalizeWheel = function(event) {
+
+								var	pixelStep = 10,
+									lineHeight = 40,
+									pageHeight = 800,
+									sX = 0,
+									sY = 0,
+									pX = 0,
+									pY = 0;
+
+								// Legacy.
+									if ('detail' in event)
+										sY = event.detail;
+									else if ('wheelDelta' in event)
+										sY = event.wheelDelta / -120;
+									else if ('wheelDeltaY' in event)
+										sY = event.wheelDeltaY / -120;
+
+									if ('wheelDeltaX' in event)
+										sX = event.wheelDeltaX / -120;
+
+								// Side scrolling on FF with DOMMouseScroll.
+									if ('axis' in event
+									&&	event.axis === event.HORIZONTAL_AXIS) {
+										sX = sY;
+										sY = 0;
+									}
+
+								// Calculate.
+									pX = sX * pixelStep;
+									pY = sY * pixelStep;
+
+									if ('deltaY' in event)
+										pY = event.deltaY;
+
+									if ('deltaX' in event)
+										pX = event.deltaX;
+
+									if ((pX || pY)
+									&&	event.deltaMode) {
+
+										if (event.deltaMode == 1) {
+											pX *= lineHeight;
+											pY *= lineHeight;
+										}
+										else {
+											pX *= pageHeight;
+											pY *= pageHeight;
+										}
+
+									}
+
+								// Fallback if spin cannot be determined.
+									if (pX && !sX)
+										sX = (pX < 1) ? -1 : 1;
+
+									if (pY && !sY)
+										sY = (pY < 1) ? -1 : 1;
+
+								// Return.
+									return {
+										spinX: sX,
+										spinY: sY,
+										pixelX: pX,
+										pixelY: pY
+									};
+
+							};
+
+						// Wheel event.
+							$body.on('wheel', function(event) {
+
+								// Disable on <=small.
+									if (skel.breakpoint('small').active)
+										return;
+
+								// Prevent default.
+									event.preventDefault();
+									event.stopPropagation();
+
+								// Stop link scroll.
+									$bodyHtml.stop();
+
+								// Calculate delta, direction.
+									var	n = normalizeWheel(event.originalEvent),
+										x = (n.pixelX != 0 ? n.pixelX : n.pixelY),
+										delta = Math.min(Math.abs(x), 150) * settings.scrollWheel.factor,
+										direction = x > 0 ? 1 : -1;
+
+								// Scroll page.
+									$document.scrollLeft($document.scrollLeft() + (delta * direction));
+
+							});
+
+					})();
+
+			// Scroll zones.
+				if (settings.scrollZones.enabled)
+					(function() {
+
+						var	$left = $('<div class="scrollZone left"></div>'),
+							$right = $('<div class="scrollZone right"></div>'),
+							$zones = $left.add($right),
+							paused = false,
+							intervalId = null,
+							direction,
+							activate = function(d) {
+
+								// Disable on <=small.
+									if (skel.breakpoint('small').active)
+										return;
+
+								// Paused? Bail.
+									if (paused)
+										return;
+
+								// Stop link scroll.
+									$bodyHtml.stop();
+
+								// Set direction.
+									direction = d;
+
+								// Initialize interval.
+									clearInterval(intervalId);
+
+									intervalId = setInterval(function() {
+										$document.scrollLeft($document.scrollLeft() + (settings.scrollZones.speed * direction));
+									}, 25);
+
+							},
+							deactivate = function() {
+
+								// Unpause.
+									paused = false;
+
+								// Clear interval.
+									clearInterval(intervalId);
+
+							};
+
+						$zones
+							.appendTo($wrapper)
+							.on('mouseleave mousedown', function(event) {
+								deactivate();
+							});
+
+						$left
+							.css('left', '0')
+							.on('mouseenter', function(event) {
+								activate(-1);
+							});
+
+						$right
+							.css('right', '0')
+							.on('mouseenter', function(event) {
+								activate(1);
+							});
+
+						$wrapper
+							.on('---pauseScrollZone', function(event) {
+
+								// Pause.
+									paused = true;
+
+								// Unpause after delay.
+									setTimeout(function() {
+										paused = false;
+									}, 500);
+
+							});
+
+					})();
+
+			// Dragging.
+				if (settings.dragging.enabled)
+					(function() {
+
+						var dragging = false,
+							dragged = false,
+							distance = 0,
+							startScroll,
+							momentumIntervalId, velocityIntervalId,
+							startX, currentX, previousX,
+							velocity, direction;
+
+						$wrapper
+
+							// Prevent image drag and drop.
+								.on('mouseup mousemove mousedown', '.image, img', function(event) {
+									event.preventDefault();
+								})
+
+							// Prevent mouse events inside excluded elements from bubbling.
+								.on('mouseup mousemove mousedown', settings.excludeSelector, function(event) {
+
+									// Prevent event from bubbling.
+										event.stopPropagation();
+
+									// End drag.
+										dragging = false;
+										$wrapper.removeClass('is-dragging');
+										clearInterval(velocityIntervalId);
+										clearInterval(momentumIntervalId);
+
+									// Pause scroll zone.
+										$wrapper.triggerHandler('---pauseScrollZone');
+
+								})
+
+							// Mousedown event.
+								.on('mousedown', function(event) {
+
+									// Disable on <=small.
+										if (skel.breakpoint('small').active)
+											return;
+
+									// Clear momentum interval.
+										clearInterval(momentumIntervalId);
+
+									// Stop link scroll.
+										$bodyHtml.stop();
+
+									// Start drag.
+										dragging = true;
+										$wrapper.addClass('is-dragging');
+
+									// Initialize and reset vars.
+										startScroll = $document.scrollLeft();
+										startX = event.clientX;
+										previousX = startX;
+										currentX = startX;
+										distance = 0;
+										direction = 0;
+
+									// Initialize velocity interval.
+										clearInterval(velocityIntervalId);
+
+										velocityIntervalId = setInterval(function() {
+
+											// Calculate velocity, direction.
+												velocity = Math.abs(currentX - previousX);
+												direction = (currentX > previousX ? -1 : 1);
+
+											// Update previous X.
+												previousX = currentX;
+
+										}, 50);
+
+								})
+
+							// Mousemove event.
+								.on('mousemove', function(event) {
+
+									// Not dragging? Bail.
+										if (!dragging)
+											return;
+
+									// Velocity.
+										currentX = event.clientX;
+
+									// Scroll page.
+										$document.scrollLeft(startScroll + (startX - currentX));
+
+									// Update distance.
+										distance = Math.abs(startScroll - $document.scrollLeft());
+
+									// Distance exceeds threshold? Disable pointer events on all descendents.
+										if (!dragged
+										&&	distance > settings.dragging.threshold) {
+
+											$wrapper.addClass('is-dragged');
+
+											dragged = true;
+
+										}
+
+								})
+
+							// Mouseup/mouseleave event.
+								.on('mouseup mouseleave', function(event) {
+
+									var m;
+
+									// Not dragging? Bail.
+										if (!dragging)
+											return;
+
+									// Dragged? Re-enable pointer events on all descendents.
+										if (dragged) {
+
+											setTimeout(function() {
+												$wrapper.removeClass('is-dragged');
+											}, 100);
+
+											dragged = false;
+
+										}
+
+									// Distance exceeds threshold? Prevent default.
+										if (distance > settings.dragging.threshold)
+											event.preventDefault();
+
+									// End drag.
+										dragging = false;
+										$wrapper.removeClass('is-dragging');
+										clearInterval(velocityIntervalId);
+										clearInterval(momentumIntervalId);
+
+									// Pause scroll zone.
+										$wrapper.triggerHandler('---pauseScrollZone');
+
+									// Initialize momentum interval.
+										if (settings.dragging.momentum > 0) {
+
+											m = velocity;
+
+											momentumIntervalId = setInterval(function() {
+
+												// Scroll page.
+													$document.scrollLeft($document.scrollLeft() + (m * direction));
+
+												// Decrease momentum.
+													m = m * settings.dragging.momentum;
+
+												// Negligible momentum? Clear interval and end.
+													if (Math.abs(m) < 1)
+														clearInterval(momentumIntervalId);
+
+											}, 15);
+
+										}
+
+								});
+
+					})();
+
+			// Link scroll.
+				$wrapper
+					.on('mousedown mouseup', 'a[href^="#"]', function(event) {
+
+						// Stop propagation.
+							event.stopPropagation();
+
+					})
+					.on('click', 'a[href^="#"]', function(event) {
+
+						var	$this = $(this),
+							href = $this.attr('href'),
+							$target, x, y;
+
+						// Get target.
+							if (href == '#'
+							||	($target = $(href)).length == 0)
+								return;
+
+						// Prevent default.
+							event.preventDefault();
+							event.stopPropagation();
+
+						// Calculate x, y.
+							if (skel.breakpoint('small').active) {
+
+								x = $target.offset().top - (Math.max(0, $window.height() - $target.outerHeight()) / 2);
+								y = { scrollTop: x };
+
+							}
+							else {
+
+								x = $target.offset().left - (Math.max(0, $window.width() - $target.outerWidth()) / 2);
+								y = { scrollLeft: x };
+
+							}
+
+						// Scroll.
+							$bodyHtml
+								.stop()
+								.animate(
+									y,
+									settings.linkScrollSpeed,
+									'swing'
+								);
+
+					});
+
+			// Gallery.
+				$('.gallery')
+					.on('click', 'a', function(event) {
+
+						var $a = $(this),
+							$gallery = $a.parents('.gallery'),
+							$modal = $gallery.children('.modal'),
+							$modalImg = $modal.find('img'),
+							href = $a.attr('href');
+
+						// Not an image? Bail.
+							if (!href.match(/\.(jpg|gif|png|mp4)$/))
+								return;
+
+						// Prevent default.
+							event.preventDefault();
+							event.stopPropagation();
+
+						// Locked? Bail.
+							if ($modal[0]._locked)
+								return;
+
+						// Lock.
+							$modal[0]._locked = true;
+
+						// Set src.
+							$modalImg.attr('src', href);
+
+						// Set visible.
+							$modal.addClass('visible');
+
+						// Focus.
+							$modal.focus();
+
+						// Delay.
+							setTimeout(function() {
+
+								// Unlock.
+									$modal[0]._locked = false;
+
+							}, 600);
+
+					})
+					.on('click', '.modal', function(event) {
+
+						var $modal = $(this),
+							$modalImg = $modal.find('img');
+
+						// Locked? Bail.
+							if ($modal[0]._locked)
+								return;
+
+						// Already hidden? Bail.
+							if (!$modal.hasClass('visible'))
+								return;
+
+						// Stop propagation.
+							event.stopPropagation();
+
+						// Lock.
+							$modal[0]._locked = true;
+
+						// Clear visible, loaded.
+							$modal
+								.removeClass('loaded')
+
+						// Delay.
+							setTimeout(function() {
+
+								$modal
+									.removeClass('visible')
+
+								// Pause scroll zone.
+									$wrapper.triggerHandler('---pauseScrollZone');
+
+								setTimeout(function() {
+
+									// Clear src.
+										$modalImg.attr('src', '');
+
+									// Unlock.
+										$modal[0]._locked = false;
+
+									// Focus.
+										$body.focus();
+
+								}, 475);
+
+							}, 125);
+
+					})
+					.on('keypress', '.modal', function(event) {
+
+						var $modal = $(this);
+
+						// Escape? Hide modal.
+							if (event.keyCode == 27)
+								$modal.trigger('click');
+
+					})
+					.on('mouseup mousedown mousemove', '.modal', function(event) {
+
+						// Stop propagation.
+							event.stopPropagation();
+
+					})
+					.prepend('<div class="modal" tabIndex="-1"><div class="inner"><img src="" /></div></div>')
+						.find('img')
+							.on('load', function(event) {
+
+								var $modalImg = $(this),
+									$modal = $modalImg.parents('.modal');
+
+								setTimeout(function() {
+
+									// No longer visible? Bail.
+										if (!$modal.hasClass('visible'))
+											return;
+
+									// Set loaded.
+										$modal.addClass('loaded');
+
+								}, 275);
+
+							});
+
+		});
+
 })(jQuery);
-
-
