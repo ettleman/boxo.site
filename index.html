@@ -186,19 +186,43 @@
                                         <li class="icon fa-phone">07847 854 111</li>
 										</ul>
                                     
-                                    <form action="/your-server-side-code" method="POST">
-<script
-  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-  data-key="pk_test_8UJd70OB7uNa9RYm5S2Mmfhj"
-  data-currency="GBP"    
-  data-amount="39900"
-  data-name="Boxo"
-  data-description="Basic Plan"
-  data-image="images/boxoicon-cw-05.png"
-  data-locale="auto"
-  data-zip-code="true">
+
+                                  <!-- PURCHASE -->       
+                                    
+                                    <script src="https://checkout.stripe.com/checkout.js"></script>
+
+<button id="customButton">Purchase</button>
+<form action="create_subscription.php">
+<script>
+var handler = StripeCheckout.configure({
+  key: 'pk_live_i6rCk9nSrnKPhsuw3La8ajgV',
+  image: 'http://boxo.site/images/boxoicon-cw-05.png',
+  currency: 'GBP',
+  locale: 'auto',
+  token: function(token) {
+    // You can access the token ID with `token.id`.
+    // Get the token ID to your server-side code for use.
+  }
+});
+
+document.getElementById('customButton').addEventListener('click', function(e) {
+  // Open Checkout with further options:
+  handler.open({
+    name: 'Boxo',
+    description: 'Basic Plan, Paid Monthly',
+    zipCode: true,
+    amount: 2000
+  });
+  e.preventDefault();
+});
+
+// Close Checkout on page navigation:
+window.addEventListener('popstate', function() {
+  handler.close();
+});
 </script>
-</form>
+    </form>
+                       <!-- PURCHASE -->             
                                     
 									<ul class="icons">
                                         
