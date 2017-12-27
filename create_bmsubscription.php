@@ -12,7 +12,7 @@ try
   $customer = \Stripe\Customer::create(array(
     'email' => $_POST['stripeEmail'],
     'source'  => $_POST['stripeToken'],
-    'plan' => 'basic-plan'
+    'plan' => 'basic-mo'
   ));
 
   header('Location: thankyou.html');
